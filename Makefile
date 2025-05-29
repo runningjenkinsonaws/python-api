@@ -63,26 +63,32 @@ build:
 	zip lambda.zip index.py data.json template.html
 
 deploy:
+	@echo
 	aws sts get-caller-identity
 
+	@echo
 	aws lambda wait function-active \
 		--region=$(REGION) \
 		--function-name="$(FUNCTION)"
 
+	@echo
 	aws lambda update-function-configuration \
 		--region=$(REGION) \
 		--function-name="$(FUNCTION)" \
 		--environment "Variables={BUILD_TAG=$(BUILD_TAG),VERSION=$(VERSION),BUILD_NUMBER=$(BUILD_NUMBER),ENVIRONMENT=$(ENVIRONMENT)}"
 
+	@echo
 	aws lambda wait function-updated \
 		--region=$(REGION) \
 		--function-name="$(FUNCTION)"
 
+	@echo
 	aws lambda update-function-code \
 		--region=$(REGION) \
 		--function-name="$(FUNCTION)" \
 	 	--zip-file=fileb://lambda.zip
 
+	@echo
 	aws lambda wait function-updated \
 		--region=$(REGION) \
 		--function-name="$(FUNCTION)"
