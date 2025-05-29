@@ -90,9 +90,9 @@ deploy:
 		--function-name="$(FUNCTION)" \
 	 	--zip-file=fileb://lambda.zip
 
-	aws lambda wait function-updated \
-		--region=$(REGION) \
-		--function-name="$(FUNCTION)"
+	#aws lambda wait function-updated \
+	#	--region=$(REGION) \
+	#	--function-name="$(FUNCTION)"
 
 testdeployment:
 	curl -s $(URL) | grep $(VERSION)
