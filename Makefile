@@ -93,6 +93,6 @@ testdeployment:
 clean:
 	rm -vf lambda.zip
 
-all: clean lint test build deploy
+all: requirements clean lint test build deploy
 
 .PHONY: test build deploy all clean
