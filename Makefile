@@ -1,9 +1,10 @@
-REGION=undefined
-FUNCTION=undefined
-URL=undefined
-VERSION=undefined
-PLATFORM=undefined
-BUILD_NUMBER=undefined
+REGION=${?REGION}
+FUNCTION=${?FUNCTION}
+URL=${?URL}
+VERSION=${?VERSION}
+PLATFORM=${?PLATFORM}
+BUILD_NUMBER=${?BUILD_NUMBER}
+
 CODE=$(shell ls *.py)
 
 ifneq (,$(findstring -staging,$(FUNCTION)))
