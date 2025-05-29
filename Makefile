@@ -1,7 +1,8 @@
+REGION=undefined
 FUNCTION=undefined
-PLATFORM=undefined
 URL=undefined
 VERSION=undefined
+PLATFORM=undefined
 BUILD_NUMBER=undefined
 CODE=$(shell ls *.py)
 
@@ -71,20 +72,25 @@ deploy:
 	aws sts get-caller-identity
 
 	aws lambda wait function-active \
+		--region=$(REGION) \
 		--function-name="$(FUNCTION)"
 
 	aws lambda update-function-configuration \
+		--region=$(REGION) \
 		--function-name="$(FUNCTION)" \
 		--environment "Variables={PLATFORM=$(PLATFORM),VERSION=$(VERSION),BUILD_NUMBER=$(BUILD_NUMBER),ENVIRONMENT=$(ENVIRONMENT)}"
 
 	aws lambda wait function-updated \
+		--region=$(REGION) \
 		--function-name="$(FUNCTION)"
 
 	aws lambda update-function-code \
+		--region=$(REGION) \
 		--function-name="$(FUNCTION)" \
 	 	--zip-file=fileb://lambda.zip
 
 	aws lambda wait function-updated \
+		--region=$(REGION) \
 		--function-name="$(FUNCTION)"
 
 testdeployment:
