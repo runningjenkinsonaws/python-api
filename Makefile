@@ -1,3 +1,10 @@
+REGION=${?REGION}
+FUNCTION=${?FUNCTION}
+URL=${?URL}
+VERSION=${?VERSION}
+BUILD_TAG=${?BUILD_TAG}
+BUILD_NUMBER=${?BUILD_NUMBER}
+
 CODE=$(shell ls *.py)
 
 ifneq (,$(findstring -staging,$(FUNCTION)))
@@ -29,7 +36,7 @@ hello:
 	@echo
 	@echo "Optional deploy variables are:"
 	@echo "  VERSION       - the version of the code being deployed (default: undefined)"
-	@echo "  PLATFORM      - the platform being used for the deployment (default: undefined)"
+	@echo "  BUILD_TAG     - the tag assigned by the deployment platform (default: undefined)"
 	@echo "  BUILD_NUMBER  - the build number assigned by the deployment platform (default: undefined)"
 	@echo "  URL           - the URL to use for testing the deployment (default: undefined)"
 	@echo
@@ -65,10 +72,27 @@ build:
 deploy:
 	aws sts get-caller-identity
 
+	aws lambda wait function-active \
+		--region=$(REGION) \
+		--function-name="$(FUNCTION)"
+
+	aws lambda update-function-configuration \
+		--region=$(REGION) \
+		--function-name="$(FUNCTION)" \
+		--environment "Variables={BUILD_TAG=$(BUILD_TAG),VERSION=$(VERSION),BUILD_NUMBER=$(BUILD_NUMBER),ENVIRONMENT=$(ENVIRONMENT)}"
+
+	aws lambda wait function-updated \
+		--region=$(REGION) \
+		--function-name="$(FUNCTION)"
+
 	aws lambda update-function-code \
 		--region=$(REGION) \
 		--function-name="$(FUNCTION)" \
 	 	--zip-file=fileb://lambda.zip
+
+	aws lambda wait function-updated \
+		--region=$(REGION) \
+		--function-name="$(FUNCTION)"
 
 testdeployment:
 	curl -s $(URL) | grep $(VERSION)
