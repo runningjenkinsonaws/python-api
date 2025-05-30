@@ -1,3 +1,5 @@
+ENVIRONMENT=production
+
 CODE=$(shell ls *.py)
 
 ifneq (,$(findstring -staging,$(FUNCTION)))
